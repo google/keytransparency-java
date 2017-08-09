@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/keytransparency/keytransparency.iml" filepath="$PROJECT_DIR$/keytransparency/keytransparency.iml" />
+      <module fileurl="file://$PROJECT_DIR$/keytransparency-java.iml" filepath="$PROJECT_DIR$/keytransparency-java.iml" />
+      <module fileurl="file://$PROJECT_DIR$/keytransparencygobind/keytransparencygobind.iml" filepath="$PROJECT_DIR$/keytransparencygobind/keytransparencygobind.iml" />
+    </modules>
+  </component>
+</project>
