@@ -25,13 +25,34 @@ public class KeyTransparencyExample extends AppCompatActivity {
         tv.setMovementMethod(new ScrollingMovementMethod());
 
         try{
-            tv.append("\n\n --- GetEntry test using library --- \n");
+            tv.append("\n\n --- GetEntry test --- \n");
 
-            KTClient client = new KTClient("35.184.134.53:8080", 1, getApplicationContext(), R.raw.server, R.raw.vrf_pubkey, R.raw.p256_pubkey, R.raw.trillian_log);
+            String ktUrl = "35.184.134.53:8080";
+            KTClient client = new KTClient(ktUrl, 1, getApplicationContext(), R.raw.server, R.raw.vrf_pubkey, R.raw.p256_pubkey, R.raw.trillian_log);
+            client.setTextViewForLogs(tv);
             try {
-                client.getEntry("user","app",1000);
+                String username = "gary.belvin@gmail.com";
+
+                tv.append("\nTrying to get public key for " + username + " from server " + ktUrl +"\n");
+                byte[] entry = client.getEntry(username,"app1",1000);
+                if (entry==null){
+                    tv.append("Received key is null: entry does not exists");
+                } else {
+                    tv.append("Received key: " + new String(entry, "UTF-8"));
+                }
+
+                username = "NOT_A_USER@gmail.com";
+                tv.append("\n\nTrying to get public key for " + username + " from server " + ktUrl +"\n");
+                entry = client.getEntry(username,"app1",1000);
+                if (entry==null){
+                    tv.append("Received key is null: entry does not exists");
+                } else {
+                    tv.append("Received key: " + new String(entry, "UTF-8"));
+                }
+
+
             } catch (KeyTransparencyException e) {
-                tv.append("Expected exception was raised: " + e);
+                tv.append("Exception was raised: " + e);
             }
 
         } catch (IOException e) {
