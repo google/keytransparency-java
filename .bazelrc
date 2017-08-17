@@ -1,0 +1,5 @@
+# Optional: GOPATH and ANDROID_HOME need to be passed to the bazel build command. 
+# To avoid typing them in the command line, please edit and uncomment the following lines.
+# build --action_env=ANDROID_HOME=/Your/Android/Home/Path # example:/Users/YourUserName/Library/Android/sdk
+# build --action_env=GOPATH=/Your/Go/Path/ # example: /Users/YourUserName/go
+
