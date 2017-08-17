@@ -1,6 +1,6 @@
 android_binary(
     name = "exampleapp",
-    srcs = glob(["src/main/java/com/google/keytransparency/exampleapp/*.java"]),    
+    srcs = ["src/main/java/com/google/keytransparency/exampleapp/KeyTransparencyExample.java"],    
     custom_package = "com.google.keytransparency.exampleapp",
     manifest = "src/main/AndroidManifest.xml",
     resource_files = glob(["src/main/res/**"]),
