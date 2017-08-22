@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.google.keytransparency.gobind.gobindClient.BClientParams;
 import com.google.keytransparency.gobind.gobindClient.GobindClient;
 import com.google.keytransparency.gobind.gobindClient.BWriter;
 
@@ -16,7 +15,7 @@ import java.io.InputStream;
 public class KTClient {
     private static final String TAG_LOGS_FROM_GOBIND = "KTGo:";
 
-    private final BClientParams clientParams;
+    private static KTClient client;
 
     // TODO remove me
     TextView tv;
@@ -25,30 +24,40 @@ public class KTClient {
     }
 
 
-    public KTClient(String ktUrl, long mapID, byte[] ktServerTLSCert, byte[] vrfPubKey, byte[] ktSmrPubKey, byte[] trLogKey) {
-        clientParams = new BClientParams(ktUrl, mapID, ktServerTLSCert, vrfPubKey, ktSmrPubKey, trLogKey);
-        GobindClient.bSetCustomLogger(new WriterForGoLogs());
-    }
-
-    public KTClient(String ktUrl, long mapID, Context context, int ktServerTLSCertResID, int vrfPubKeyResID, int ktSmrPubKeyResID, int trLogKeyResID) throws IOException {
-        this(ktUrl, mapID, resourceToByteArray(context, ktServerTLSCertResID),
-                resourceToByteArray(context, vrfPubKeyResID),
-                resourceToByteArray(context, ktSmrPubKeyResID),
-                resourceToByteArray(context, trLogKeyResID));
-    }
-
-    public byte[] getEntry(String userName, String appName, int timeoutInMilliseconds) throws KeyTransparencyException {
+    private KTClient(int timeoutInMs){
         try {
-            // TODO(amarcedone): do we want to store the latest smr so that it can be used for consistency of new requests?
-            return GobindClient.bGetEntry(timeoutInMilliseconds, clientParams, userName, appName);
+            GobindClient.bInit(timeoutInMs);
+            GobindClient.bSetCustomLogger(new WriterForGoLogs());
+        }catch (Exception e) {
+            // This should never happen actually. We are enforcing init can be called only once,
+            // and so far the only error comes from calling init twice.
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static KTClient getClient(int timeoutInMs){
+        if (client == null) {
+            client = new KTClient(timeoutInMs);
+        }
+        return client;
+    }
+
+    public void addKtServer(String ktUrl, boolean insecureTLS, byte[] ktTlsCertPem, byte[] domainInfoHash) throws KeyTransparencyException {
+        try {
+            GobindClient.bAddKtServer(ktUrl, insecureTLS, ktTlsCertPem, domainInfoHash);
         } catch (Exception e) {
             throw new KeyTransparencyException(e);
         }
     }
 
-//    byte[] verifyGetEntryResponse(){
-//        return null;
-//    }
+    public byte[] getEntry(String ktUrl, String userName, String appName) throws KeyTransparencyException {
+        try {
+            // TODO(amarcedone): do we want to store the latest smr so that it can be used for consistency of new requests?
+            return GobindClient.bGetEntry(ktUrl, userName, appName);
+        } catch (Exception e) {
+            throw new KeyTransparencyException(e);
+        }
+    }
 
     private class WriterForGoLogs implements BWriter {
         @Override
@@ -63,22 +72,6 @@ public class KTClient {
 
             return bytes.length;
         }
-    }
-
-    private static byte[] resourceToByteArray(Context context, int resourceId) throws IOException {
-        InputStream is = context.getResources().openRawResource(resourceId);
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-
-        int nRead;
-        // TODO(amarcedone): Buffer size was chosen arbitrarily. Figure out what is appropriate.
-        byte[] data = new byte[16384];
-
-        while ((nRead = is.read(data, 0, data.length)) != -1) {
-            buffer.write(data, 0, nRead);
-        }
-
-        buffer.flush();
-        return buffer.toByteArray();
     }
 
 }
