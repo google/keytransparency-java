@@ -1,1 +1,1 @@
-include  ':keytransparencygobind', ':keytransparency'
+include  ':keytransparency', ':exampleapp', ':keytransparencygobind'
