@@ -1,4 +1,4 @@
-package com.google.keytransparency;
+package com.google.keytransparency.client;
 
 import com.google.keytransparency.gobind.gobindclient.LogWriter;
 

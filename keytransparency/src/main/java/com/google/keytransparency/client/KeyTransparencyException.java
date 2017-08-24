@@ -1,4 +1,4 @@
-package com.google.keytransparency;
+package com.google.keytransparency.client;
 
 /**
  * A KeyTransparencyException is thrown whenever the go native code throws an Exception.
