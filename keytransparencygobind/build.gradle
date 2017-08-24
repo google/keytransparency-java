@@ -1,0 +1,10 @@
+plugins {
+    id "org.golang.mobile.bind2" version "0.2.5"
+}
+
+gobind {
+    pkg = "github.com/google/keytransparency/core/client/gobindclient"
+    // Please add your GOPATH here.
+    // GOPATH = "Your/Go/Path/Here"
+    GOMOBILEFLAGS="-javapkg com.google.keytransparency.gobind"
+}
