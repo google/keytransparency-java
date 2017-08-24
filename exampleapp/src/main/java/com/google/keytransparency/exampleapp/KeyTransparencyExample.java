@@ -71,13 +71,12 @@ public class KeyTransparencyExample extends AppCompatActivity {
                 tv.append("\n\n --- GetEntry test --- \n");
                 tv.append("\nTrying to get public key for (" + email + "," + appId + ") from server " + ktUrl + "\n");
 
-                byte[] entry = new byte[0];
                 try {
-                    entry = KeyTransparencyClient.getEntry(ktUrl, email, appId);
+                    byte[] entry = KeyTransparencyClient.getEntry(ktUrl, email, appId);
                     if (entry == null) {
                         tv.append("Received key is null: entry does not exists");
                     } else {
-                            tv.append("Received key: " + bytesToHex(entry));
+                        tv.append("Received key: " + bytesToHex(entry));
                     }
                 } catch (KeyTransparencyException e) {
                     tv.append("\nError getting the key: " + e.getMessage());
