@@ -35,3 +35,6 @@ hs_err_pid*
 
 keytransparencygobind/keytransparencygobind.aar
 
+build/
+keytransparency/build/
+keytransparencygobind/build/
