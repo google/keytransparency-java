@@ -2,7 +2,10 @@ package com.google.keytransparency;
 
 import com.google.keytransparency.gobind.gobindclient.Gobindclient;
 
-public class KeyTransparencyClient {
+public final class KeyTransparencyClient {
+
+    // Prevents instantiating the class.
+    private KeyTransparencyClient(){}
 
     // addVerboseLogsDestination instructs the client to also send the verbose log statements
     // to the provided destination. Useful for demonstrating what the library is doing.
