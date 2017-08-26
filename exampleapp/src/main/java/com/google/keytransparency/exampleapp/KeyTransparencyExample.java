@@ -21,6 +21,19 @@ public class KeyTransparencyExample extends AppCompatActivity {
 
     private static final String TAG_LOGS_FROM_GOBIND = "GoKtClient:";
 
+    private static final String DEFAULT_AUTHORIZED_PUBLIC_KEY = "-----BEGIN PUBLIC KEY-----\n"+
+            "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEBUzgqmfMNYETU67U5kklSx/wfqcd\n"+
+            "Zn+mxLDouFyti/hdshzOlZYfb51YG+zhgQQ7PpTzoj3Lz/EdfeZauwDKPA==\n"+
+            "-----END PUBLIC KEY-----";
+
+    private static final String DEFAULT_AUTHORIZED_PRIVATE_KEY = "-----BEGIN EC PRIVATE KEY-----\n" +
+            "MHcCAQEEIKrzmO7QnfhTXOSP7hPk6j5fO2b36z97w35Fdr6d0qUkoAoGCCqGSM49\n" +
+            "AwEHoUQDQgAEBUzgqmfMNYETU67U5kklSx/wfqcdZn+mxLDouFyti/hdshzOlZYf\n" +
+            "b51YG+zhgQQ7PpTzoj3Lz/EdfeZauwDKPA==\n" +
+            "-----END EC PRIVATE KEY-----";
+
+    private static final int DEFAULT_RETRY_COUNT = 15;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +59,9 @@ public class KeyTransparencyExample extends AppCompatActivity {
         final EditText appIdEditText = (EditText) findViewById(R.id.appId);
         appIdEditText.setText("app1");
 
+        final EditText profileDataEditText = (EditText) findViewById(R.id.profileData);
+        profileDataEditText.setText("myProfileData");
+
         final Button addServerButton = (Button) findViewById(R.id.addServerButton);
         addServerButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -53,7 +69,7 @@ public class KeyTransparencyExample extends AppCompatActivity {
                 tv.append("\n\n --- AddServer test --- \n");
                 tv.append("\nAdding " + ktUrl + "as a KeyTransparency server\n");
                 try {
-                    KeyTransparencyClient.addKtServer(ktUrl, true, null, null);
+                    KeyTransparencyClient.addKtServerIfNotExists(ktUrl, true, null, null);
                 } catch (KeyTransparencyException e) {
                     tv.append("\nError connecting to the server: " + e.getMessage());
                     e.printStackTrace();
@@ -83,6 +99,35 @@ public class KeyTransparencyExample extends AppCompatActivity {
                 }
             }
         });
+
+        final Button updateEntryButton = (Button) findViewById(R.id.updateEntryButton);
+        updateEntryButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String email = emailEditText.getText().toString();
+                String appId = appIdEditText.getText().toString();
+                String ktUrl = urlEditText.getText().toString();
+
+                String profileData = profileDataEditText.getText().toString();
+
+
+                tv.append("\n\n --- UpdateEntry test --- \n");
+                try {
+                    tv.append("\nTrying to update public key for (" + email + "," + appId + "," + bytesToHex(profileData.getBytes("UTF-8")) + ") from server " + ktUrl + "\n");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    KeyTransparencyClient.updateEntry(ktUrl, email, appId, profileData.getBytes("UTF-8"), DEFAULT_AUTHORIZED_PRIVATE_KEY, DEFAULT_AUTHORIZED_PUBLIC_KEY, DEFAULT_RETRY_COUNT);
+                    tv.append("Update succeeded");
+                } catch (KeyTransparencyException e) {
+                    tv.append("\nError updating the key: " + e.getMessage());
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
     }
 
     private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
